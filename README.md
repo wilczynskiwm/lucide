@@ -35,10 +35,27 @@ The `lucide` package supports both Django templates and Jinja templates.
     ]
     ```
 
-2. Load the template library:
+2. Load the template library in your templates:
 
     ```django
     {% load lucide %}
+    ```
+
+    **Or** make it available globally (no `{% load %}` needed):
+
+    ```python
+    TEMPLATES = [
+        {
+            "BACKEND": "django.template.backends.django.DjangoTemplates",
+            # ...
+            "OPTIONS": {
+                # ...
+                "builtins": [
+                    "lucide.templatetags.lucide",
+                ],
+            },
+        }
+    ]
     ```
 
 3. Use icons:
