@@ -1,6 +1,11 @@
 
 # Changelog
 
+## 1.3.0 (2025-02-04)
+
+* Add Python 3.13 and 3.14 support
+* Simplify dependency management (remove 24 requirements files)
+
 ## 1.2.1 (2025-02-04)
 
 * Add tests for 100% code coverage
