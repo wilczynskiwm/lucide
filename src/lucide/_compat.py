@@ -21,5 +21,9 @@ if sys.version_info >= (3, 9):
     def open_binary(pkg: str, filename: str) -> IO[bytes]:
         return (files(pkg) / filename).open("rb")
 
+    def open_text(pkg: str, filename: str) -> IO[str]:
+        return (files(pkg) / filename).open("r", encoding="utf-8")
+
 else:
     from importlib.resources import open_binary  # noqa: F401
+    from importlib.resources import open_text  # noqa: F401

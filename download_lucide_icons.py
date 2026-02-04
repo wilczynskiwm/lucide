@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 """
 Download the latest lucide zip file and select only the optimized icons.
+Also extracts alias mappings from icon metadata.
 """
 
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import subprocess
 from io import BytesIO
@@ -35,11 +37,36 @@ def main(argv: list[str] | None = None) -> int:
     input_prefix = "icons/"
 
     output_path = "src/lucide/lucide.zip"
+    aliases_path = "src/lucide/aliases.json"
 
+    # Extract aliases from JSON metadata
+    aliases: dict[str, str] = {}
+    for name in input_zip.namelist():
+        if name.startswith(input_prefix) and name.endswith(".json"):
+            try:
+                content = json.loads(input_zip.read(name))
+                icon_name = name[len(input_prefix) :].replace(".json", "")
+                if "aliases" in content and content["aliases"]:
+                    for alias in content["aliases"]:
+                        if isinstance(alias, dict) and "name" in alias:
+                            aliases[alias["name"]] = icon_name
+                        elif isinstance(alias, str):
+                            aliases[alias] = icon_name
+            except (json.JSONDecodeError, KeyError):
+                pass
+
+    # Write aliases file
+    with open(aliases_path, "w") as f:
+        json.dump(aliases, f, indent=2, sort_keys=True)
+    print(f"✅ Written {len(aliases)} aliases to {aliases_path}")
+
+    # Write icons zip
     try:
         os.remove(output_path)
     except FileNotFoundError:
         pass
+
+    icon_count = 0
     with ZipFile(
         output_path, "w", compression=ZIP_DEFLATED, compresslevel=9
     ) as output_zip:
@@ -53,8 +80,9 @@ def main(argv: list[str] | None = None) -> int:
                 info.filename = new_name
                 output_zip.writestr(info, data)
                 print(new_name)
+                icon_count += 1
 
-    print("\n✅ Written!")
+    print(f"\n✅ Written {icon_count} icons to {output_path}")
 
     return 0
 

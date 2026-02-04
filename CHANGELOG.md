@@ -6,6 +6,7 @@
 * Upgrade lucide icons to v0.563.0 (1535 → 1668 icons)
 * Add GitHub Actions workflow for automatic icon updates
 * Add dynamic template attribute rendering support
+* Add icon alias support with deprecation warnings (246 aliases)
 
 ## 1.1.3 (2024-11-08)
 
