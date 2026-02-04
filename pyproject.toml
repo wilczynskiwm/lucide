@@ -14,7 +14,7 @@ keywords = [
 ]
 license = { text = "MIT" }
 authors = [
-  { name = "Francisco Macedo", email = "me@fmacedo.com" },
+  { name = "Marcin Wilczyński", email = "wilczynskiwm@gmail.com" },
 ]
 requires-python = ">=3.8"
 classifiers = [
