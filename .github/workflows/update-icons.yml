@@ -107,7 +107,7 @@ jobs:
       - name: Run tests
         if: steps.check.outputs.needs_update == 'true'
         run: |
-          tox run -e py312
+          tox run -e py312-django50
 
       - name: Update CHANGELOG
         if: steps.check.outputs.needs_update == 'true'
