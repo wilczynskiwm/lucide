@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.3.1 (2025-02-04)
+
+* Update package author and license information
+
 ## 1.3.0 (2025-02-04)
 
 * Add Python 3.13 and 3.14 support
