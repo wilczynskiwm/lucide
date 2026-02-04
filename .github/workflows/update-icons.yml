@@ -83,15 +83,19 @@ jobs:
           echo "Downloading Lucide $VERSION..."
           python download_lucide_icons.py "$VERSION"
 
-      - name: Count new icons
+      - name: Count new icons and aliases
         if: steps.check.outputs.needs_update == 'true'
         id: new_count
         run: |
           python -c "
+          import json
           from zipfile import ZipFile
           with ZipFile('src/lucide/lucide.zip', 'r') as zf:
               icons = [n for n in zf.namelist() if n.endswith('.svg')]
               print(f'new_count={len(icons)}')
+          with open('src/lucide/aliases.json') as f:
+              aliases = json.load(f)
+              print(f'alias_count={len(aliases)}')
           " >> $GITHUB_OUTPUT
 
       - name: Install dependencies for tests
@@ -140,15 +144,17 @@ jobs:
           body: |
             ## Automated Icon Update
 
-            This PR updates the bundled Lucide icons.
+            This PR updates the bundled Lucide icons and aliases.
 
             | | Before | After |
             |---|--------|-------|
             | **Version** | ${{ steps.current.outputs.current_version }} | ${{ steps.latest.outputs.latest_version }} |
             | **Icons** | ${{ steps.current.outputs.current_count }} | ${{ steps.new_count.outputs.new_count }} |
+            | **Aliases** | - | ${{ steps.new_count.outputs.alias_count }} |
 
             ### Changes
             - Downloaded latest icons from [Lucide releases](https://github.com/lucide-icons/lucide/releases/tag/${{ steps.latest.outputs.latest_version }})
+            - Updated icon alias mappings
             - All tests passed ✅
 
             ---
