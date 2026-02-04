@@ -5,7 +5,7 @@ requires = [
 ]
 
 [project]
-name = "lucide"
+name = "django-lucide"
 version = "1.2.0"
 description = "Use lucide in your Django and Jinja templates."
 readme = "README.md"
