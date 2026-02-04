@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.2.1 (2025-02-04)
+
+* Add tests for 100% code coverage
+
 ## 1.2.0 (2025-02-04)
 
 * Upgrade lucide icons to v0.563.0 (1535 → 1668 icons)
