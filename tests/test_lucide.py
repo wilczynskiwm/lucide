@@ -63,3 +63,18 @@ def test_load_icon_alias_same_as_target():
     svg_direct = lucide._render_icon("pen", size=24)
 
     assert svg_alias == svg_direct
+
+
+def test_load_aliases_file_not_found():
+    """Test that missing aliases.json returns empty dict."""
+    from unittest.mock import patch
+
+    # Clear the cache first
+    lucide._load_aliases.cache_clear()
+
+    with patch("lucide.open_text", side_effect=FileNotFoundError):
+        result = lucide._load_aliases()
+        assert result == {}
+
+    # Restore cache
+    lucide._load_aliases.cache_clear()
