@@ -1,0 +1,160 @@
+name: Update Lucide Icons
+
+on:
+  schedule:
+    # Codziennie o 6:00 UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Force update even if version unchanged'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  check-and-update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Get current bundled version
+        id: current
+        run: |
+          # Wersja jest w CHANGELOG.md lub pyproject.toml
+          # Sprawdzamy też ile ikon mamy
+          python -c "
+          from zipfile import ZipFile
+          with ZipFile('src/lucide/lucide.zip', 'r') as zf:
+              icons = [n for n in zf.namelist() if n.endswith('.svg')]
+              print(f'current_count={len(icons)}')
+          " >> $GITHUB_OUTPUT
+
+          # Pobierz aktualną wersję z CHANGELOG
+          CURRENT_VERSION=$(grep -oP 'Updated icons to v\K[0-9.]+' CHANGELOG.md | head -1 || echo "unknown")
+          echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Get latest Lucide version
+        id: latest
+        run: |
+          # Znajdź najnowszą wersję z dostępnym ZIP
+          RELEASES=$(curl -s "https://api.github.com/repos/lucide-icons/lucide/releases?per_page=10")
+
+          for i in {0..9}; do
+            TAG=$(echo "$RELEASES" | jq -r ".[$i].tag_name")
+            HAS_ZIP=$(echo "$RELEASES" | jq -r ".[$i].assets[].name" | grep -c "lucide-icons.*\.zip" || true)
+
+            if [ "$HAS_ZIP" -gt 0 ]; then
+              echo "latest_version=$TAG" >> $GITHUB_OUTPUT
+              echo "Found latest version with ZIP: $TAG"
+              break
+            fi
+          done
+
+      - name: Check if update needed
+        id: check
+        env:
+          CURRENT_VERSION: ${{ steps.current.outputs.current_version }}
+          LATEST_VERSION: ${{ steps.latest.outputs.latest_version }}
+          FORCE_UPDATE: ${{ inputs.force }}
+        run: |
+          echo "Current: $CURRENT_VERSION"
+          echo "Latest: $LATEST_VERSION"
+
+          if [ "$FORCE_UPDATE" = "true" ] || [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
+            echo "needs_update=true" >> $GITHUB_OUTPUT
+            echo "Update needed!"
+          else
+            echo "needs_update=false" >> $GITHUB_OUTPUT
+            echo "Already up to date."
+          fi
+
+      - name: Download new icons
+        if: steps.check.outputs.needs_update == 'true'
+        env:
+          VERSION: ${{ steps.latest.outputs.latest_version }}
+        run: |
+          echo "Downloading Lucide $VERSION..."
+          python download_lucide_icons.py "$VERSION"
+
+      - name: Count new icons
+        if: steps.check.outputs.needs_update == 'true'
+        id: new_count
+        run: |
+          python -c "
+          from zipfile import ZipFile
+          with ZipFile('src/lucide/lucide.zip', 'r') as zf:
+              icons = [n for n in zf.namelist() if n.endswith('.svg')]
+              print(f'new_count={len(icons)}')
+          " >> $GITHUB_OUTPUT
+
+      - name: Install dependencies for tests
+        if: steps.check.outputs.needs_update == 'true'
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install --upgrade tox
+
+      - name: Run tests
+        if: steps.check.outputs.needs_update == 'true'
+        run: |
+          tox run -e py312
+
+      - name: Update CHANGELOG
+        if: steps.check.outputs.needs_update == 'true'
+        env:
+          VERSION: ${{ steps.latest.outputs.latest_version }}
+          OLD_COUNT: ${{ steps.current.outputs.current_count }}
+          NEW_COUNT: ${{ steps.new_count.outputs.new_count }}
+        run: |
+          DATE=$(date +%Y-%m-%d)
+
+          # Dodaj wpis na początek CHANGELOG
+          cat > /tmp/changelog_entry.md << EOF
+          ## [Unreleased]
+
+          ### Changed
+          - Updated icons to v${VERSION} (${OLD_COUNT} → ${NEW_COUNT} icons)
+
+          EOF
+
+          # Wstaw po pierwszej linii (nagłówku)
+          head -1 CHANGELOG.md > /tmp/new_changelog.md
+          echo "" >> /tmp/new_changelog.md
+          cat /tmp/changelog_entry.md >> /tmp/new_changelog.md
+          tail -n +2 CHANGELOG.md >> /tmp/new_changelog.md
+          mv /tmp/new_changelog.md CHANGELOG.md
+
+      - name: Create Pull Request
+        if: steps.check.outputs.needs_update == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Update Lucide icons to ${{ steps.latest.outputs.latest_version }}"
+          title: "⬆️ Update Lucide icons to ${{ steps.latest.outputs.latest_version }}"
+          body: |
+            ## Automated Icon Update
+
+            This PR updates the bundled Lucide icons.
+
+            | | Before | After |
+            |---|--------|-------|
+            | **Version** | ${{ steps.current.outputs.current_version }} | ${{ steps.latest.outputs.latest_version }} |
+            | **Icons** | ${{ steps.current.outputs.current_count }} | ${{ steps.new_count.outputs.new_count }} |
+
+            ### Changes
+            - Downloaded latest icons from [Lucide releases](https://github.com/lucide-icons/lucide/releases/tag/${{ steps.latest.outputs.latest_version }})
+            - All tests passed ✅
+
+            ---
+            🤖 *This PR was created automatically by the update-icons workflow.*
+          branch: auto-update/lucide-${{ steps.latest.outputs.latest_version }}
+          delete-branch: true
+          labels: |
+            dependencies
+            automated

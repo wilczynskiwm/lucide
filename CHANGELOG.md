@@ -1,5 +1,12 @@
 
 # Changelog
+
+## 1.2.0 (2025-02-04)
+
+* Upgrade lucide icons to v0.563.0 (1535 → 1668 icons)
+* Add GitHub Actions workflow for automatic icon updates
+* Add dynamic template attribute rendering support
+
 ## 1.1.3 (2024-11-08)
 
 * upgrade lucide icons version to 0.455.0

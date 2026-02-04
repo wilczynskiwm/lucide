@@ -24,7 +24,7 @@ def test_success_icon():
 
     assert result == (
         # fmt: off
-        '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n  <path d="M3.5 13h6" />\n  <path d="m2 16 4.5-9 4.5 9" />\n  <path d="M18 7v9" />\n  <path d="m14 12 4 4 4-4" />\n</svg>'
+        '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n  <path d="m14 12 4 4 4-4" />\n  <path d="M18 16V7" />\n  <path d="m2 16 4.039-9.69a.5.5 0 0 1 .923 0L11 16" />\n  <path d="M3.304 13h6.392" />\n</svg>'
         # fmt: on
     )
 
@@ -37,7 +37,7 @@ def test_success_icon_path_attr():
 
     assert result == (
         # fmt: off
-        '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n  <path d="M3.5 13h6" stroke-linecap="butt" />\n  <path d="m2 16 4.5-9 4.5 9" stroke-linecap="butt" />\n  <path d="M18 7v9" stroke-linecap="butt" />\n  <path d="m14 12 4 4 4-4" stroke-linecap="butt" />\n</svg>'
+        '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n  <path d="m14 12 4 4 4-4" stroke-linecap="butt" />\n  <path d="M18 16V7" stroke-linecap="butt" />\n  <path d="m2 16 4.039-9.69a.5.5 0 0 1 .923 0L11 16" stroke-linecap="butt" />\n  <path d="M3.304 13h6.392" stroke-linecap="butt" />\n</svg>'
         # fmt: on
     )
 
@@ -52,7 +52,7 @@ def test_success_icon_complete():
 
     assert result == (
         # fmt: off
-        '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" data-test="a &lt; 2">\n  <path d="M3.5 13h6" />\n  <path d="m2 16 4.5-9 4.5 9" />\n  <path d="M18 7v9" />\n  <path d="m14 12 4 4 4-4" />\n</svg>'
+        '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" data-test="a &lt; 2">\n  <path d="m14 12 4 4 4-4" />\n  <path d="M18 16V7" />\n  <path d="m2 16 4.039-9.69a.5.5 0 0 1 .923 0L11 16" />\n  <path d="M3.304 13h6.392" />\n</svg>'
         # fmt: on
     )
 
@@ -65,6 +65,6 @@ def test_success_icon_size_none():
 
     assert result == (
         # fmt: off
-        '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n  <path d="M3.5 13h6" />\n  <path d="m2 16 4.5-9 4.5 9" />\n  <path d="M18 7v9" />\n  <path d="m14 12 4 4 4-4" />\n</svg>'
+        '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n  <path d="m14 12 4 4 4-4" />\n  <path d="M18 16V7" />\n  <path d="m2 16 4.039-9.69a.5.5 0 0 1 .923 0L11 16" />\n  <path d="M3.304 13h6.392" />\n</svg>'
         # fmt: on
     )
