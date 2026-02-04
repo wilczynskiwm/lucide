@@ -16,7 +16,7 @@ Django 3.2 to 5.0 supported.
 ## Installation
 
 ```bash
-pip install lucide
+pip install git+https://github.com/wilczynskiwm/lucide.git
 ```
 
 ## Usage
