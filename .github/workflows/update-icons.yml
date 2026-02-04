@@ -36,8 +36,8 @@ jobs:
               print(f'current_count={len(icons)}')
           " >> $GITHUB_OUTPUT
 
-          # Pobierz aktualną wersję z CHANGELOG
-          CURRENT_VERSION=$(grep -oP 'Updated icons to v\K[0-9.]+' CHANGELOG.md | head -1 || echo "unknown")
+          # Pobierz aktualną wersję z CHANGELOG (obsługuje różne formaty)
+          CURRENT_VERSION=$(grep -oP '(Updated icons to|Upgrade lucide icons to|lucide icons to) v\K[0-9.]+' CHANGELOG.md | head -1 || echo "unknown")
           echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
 
       - name: Get latest Lucide version
