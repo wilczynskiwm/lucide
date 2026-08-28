@@ -1,4 +1,10 @@
 
+
+## [Unreleased]
+
+### Changed
+- Updated icons to v1.35.0 (1668 → 1781 icons)
+
 # Changelog
 
 ## 1.3.1 (2025-02-04)
